@@ -357,8 +357,8 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
 
                 return score - (probcut_beta - beta);
             }
-            else
-                tried_to_cut_null=true;
+//            else
+//                tried_to_cut_null=true;
         }
     }
 
