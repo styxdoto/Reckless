@@ -493,7 +493,7 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
                 }
 
                 if tried_to_cut_null {
-                    reduction += 1024;
+                    reduction -= 1024;
                 }
 
                 if td.stack[td.ply].cutoff_count > 3 {
