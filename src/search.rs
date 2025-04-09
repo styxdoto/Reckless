@@ -130,6 +130,7 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
     let is_root = td.ply == 0;
     let in_check = td.board.in_check();
     let excluded = td.stack[td.ply].excluded.is_valid();
+    let mut tried_to_cut=false;
 
     td.pv.clear(td.ply);
 
@@ -354,6 +355,7 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
 
                 return score - (probcut_beta - beta);
             }
+            else { tried_to_cut = true; }
         }
     }
 
@@ -479,6 +481,10 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
                 reduction -= 4 * correction_value.abs();
 
                 reduction -= (history - 512) / 16;
+
+                if tried_to_cut {
+                    reduction -= 1024;
+                }
 
                 if td.board.in_check() {
                     reduction -= 1024;
