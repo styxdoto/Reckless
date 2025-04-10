@@ -239,7 +239,14 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
         td.quiet_history.update(td.board.prior_threats(), !td.board.side_to_move(), td.stack[td.ply - 1].mv, bonus);
     }
 
-    let improving = !in_check && td.ply >= 2 && static_eval > td.stack[td.ply - 2].static_eval;
+    let mut improved_val=0;
+    
+    if !in_check && td.ply >= 2 && td.stack[td.ply - 2].static_eval != Score::NONE {
+        improved_val = static_eval - td.stack[td.ply - 2].static_eval
+    }
+    let improving = improved_val > 0;
+
+    //let improving = !in_check && td.ply >= 2 && static_eval > td.stack[td.ply - 2].static_eval;
 
     if td.ply >= 1 && td.stack[td.ply - 1].reduction >= 3072 && static_eval + td.stack[td.ply - 1].static_eval < 0 {
         depth += 1;
@@ -252,7 +259,7 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
     td.stack[td.ply + 2].cutoff_count = 0;
 
     // Razoring
-    if !PV && !in_check && eval < alpha - 300 - 250 * depth * depth {
+    if !PV && !in_check && eval < alpha - 300 - 250 * depth * depth - depth * improved_val / 8 {
         return qsearch::<false>(td, alpha, beta);
     }
 
