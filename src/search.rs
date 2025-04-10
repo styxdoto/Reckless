@@ -259,7 +259,7 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
     td.stack[td.ply + 2].cutoff_count = 0;
 
     // Razoring
-    if !PV && !in_check && eval < alpha - 300 - 250 * depth * depth - depth * improved_val / 8 {
+    if !PV && !in_check && eval < alpha - 300 - 250 * depth * depth - depth * improved_val {
         return qsearch::<false>(td, alpha, beta);
     }
 
