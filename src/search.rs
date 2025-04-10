@@ -130,7 +130,7 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
     let is_root = td.ply == 0;
     let in_check = td.board.in_check();
     let excluded = td.stack[td.ply].excluded.is_valid();
-    let mul tried_to_cut_or_null=false;
+    let mut tried_to_cut_or_null=false;
 
     td.pv.clear(td.ply);
 
