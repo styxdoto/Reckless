@@ -130,6 +130,7 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
     let is_root = td.ply == 0;
     let in_check = td.board.in_check();
     let excluded = td.stack[td.ply].excluded.is_valid();
+    let mul tried_to_cut_or_null=false;
 
     td.pv.clear(td.ply);
 
@@ -302,7 +303,7 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
         match score {
             s if is_decisive(s) => return beta,
             s if s >= beta => return s,
-            _ => (),
+            _ => { tried_to_cut_or_null=true; },
         }
     }
 
@@ -353,6 +354,9 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
                 }
 
                 return score - (probcut_beta - beta);
+            }
+            else {
+                tried_to_cut_or_null = true;
             }
         }
     }
@@ -494,6 +498,10 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
 
                 if td.stack[td.ply - 1].killer == mv {
                     reduction -= 1024;
+                }
+
+                if tried_to_cut_or_null {
+                    reduction -= 1536
                 }
             }
 
