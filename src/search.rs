@@ -483,7 +483,7 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
                 reduction -= (history - 512) / 16;
 
                 if tried_to_cut {
-                    reduction -= 1024;
+                    reduction -= 1536;
                 }
 
                 if td.board.in_check() {
