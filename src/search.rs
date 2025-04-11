@@ -275,6 +275,7 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
         && eval >= beta
         && eval >= static_eval
         && static_eval >= beta - 20 * depth + 128 * tt_pv as i32 + 180
+        && td.stack[td.ply] >= td.stack[td.ply].nmpMinPly
         && td.board.has_non_pawns()
     {
         let r = 4
@@ -292,15 +293,32 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
         let score = -search::<false>(td, -beta, -beta + 1, depth - r, false);
 
         td.board.undo_null_move();
+        if (score >= beta && !is_decisive(nullValue)) {
+            if (td.stack[td.ply].nmpMinPly > 0 || depth < 16)
+                    return score;
+
+            assert!(td.stack[td.ply].nmpMinPly == 0);
+
+            td.stack[td.ply].nmpMinPly = td.stack[td.ply] + 3 * (depth - r) / 4;
+            let v_score = search::<false>(td, beta - 1, beta, depth - r, false);
+            td.stack[td.ply].nmpMinPly = 0;
+            if (v_score >= beta)
+                return score;
+
+        }
+
+        
+
+        
         td.ply -= 1;
 
         if td.stopped {
             return Score::ZERO;
         }
 
-        match score {
+        match v_score {
             s if is_decisive(s) => return beta,
-            s if s >= beta => return s,
+            s if s >= beta => return score,
             _ => (),
         }
     }
