@@ -293,7 +293,7 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
         let score = -search::<false>(td, -beta, -beta + 1, depth - r, false);
 
         td.board.undo_null_move();
-        if (score >= beta && !is_decisive(nullValue)) {
+        if (score >= beta && !is_decisive(score)) {
             if (td.stack[td.ply].nmpMinPly > 0 || depth < 16)
                     return score;
 
