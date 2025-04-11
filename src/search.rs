@@ -302,8 +302,6 @@ fn search<const PV: bool>(td: &mut ThreadData, mut alpha: i32, mut beta: i32, de
             td.stack[td.ply].nmpMinPly = td.stack[td.ply] + 3 * (depth - r) / 4;
             let v_score = search::<false>(td, beta - 1, beta, depth - r, false);
             td.stack[td.ply].nmpMinPly = 0;
-            if (v_score >= beta)
-                return score;
 
         }
 
